@@ -59,15 +59,27 @@ a{color:var(--accent)}
     if(!url){say('Please enter a valid website, e.g. example.com','err');return;}
     var n=parseInt(countEl.value,10);
     if(!n||n<1){say('Please enter a number of 1 or more.','err');return;}
-    if(n>50){say('Maximum is 50 tabs at a time.','err');return;}
+
+    say('Opening ' + n + ' tabs...', '');
     var opened=0;
-    for(var i=0;i<n;i++){
-      var w=null;
-      try{w=window.open(url,'_blank');}catch(e){}
-      if(w) opened++;
-    }
-    if(opened===n) say('Opened '+opened+' tab'+(opened>1?'s':'')+' of '+url,'ok');
-    else say('Opened '+opened+' of '+n+'. Your browser blocked the rest. Allow pop-ups for this page and try again.','err');
+    var i = 0;
+    
+    var interval = setInterval(function() {
+      if (i >= n) {
+        clearInterval(interval);
+        if(opened===n) say('Successfully opened all '+opened+' tabs!', 'ok');
+        else say('Opened '+opened+' of '+n+'. Browser blocked the rest due to popup limits.','err');
+        return;
+      }
+      
+      var w = null;
+      try { 
+        w = window.open(url, '_blank');
+        if (w) opened++;
+      } catch(e) {}
+      
+      i++;
+    }, 200);
   });
 })();
 </script>
